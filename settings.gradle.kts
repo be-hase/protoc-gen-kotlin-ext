@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "protoc-gen-kotlin-ext"
 
 include("protoc-gen-kotlin-ext")
+include("functional-test")

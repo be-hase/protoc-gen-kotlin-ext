@@ -102,7 +102,7 @@ internal val FieldDescriptor.javaName: String
     get() {
         val name = name.camelCase()
         return when {
-            isMapField -> name // Actually, maps are internally repeated, so they should be checked first.
+            isMapField -> name + "Map" // Actually, maps are internally repeated, so they should be checked first.
             isRepeated -> name + "List"
             else -> name
         }

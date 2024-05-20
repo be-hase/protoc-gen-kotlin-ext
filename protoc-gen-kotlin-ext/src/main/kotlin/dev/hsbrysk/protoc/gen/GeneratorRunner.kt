@@ -10,11 +10,6 @@ import dev.hsbrysk.protoc.gen.util.pascalCase
 import dev.hsbrysk.protoc.gen.util.path
 import dev.hsbrysk.protoc.gen.util.protoFileName
 
-/**
- * Pluginの仕組みはここで解説されています。
- * - https://buf.build/docs/reference/images
- * - https://qiita.com/yugui/items/87d00d77dee159e74886
- */
 object GeneratorRunner {
     @JvmStatic
     fun main(args: Array<String>) {
@@ -38,7 +33,7 @@ object GeneratorRunner {
     }
 
     /**
-     * stdinからCodeGeneratorRequestをparse
+     * Parse `CodeGeneratorRequest` from stdin.
      * ref: https://github.com/protocolbuffers/protobuf/blob/8f831e973a93a1c204abd27b545622ae1d82cae0/src/google/protobuf/compiler/plugin.proto
      */
     private fun parseGeneratorRequest(): CodeGeneratorRequest {
@@ -46,7 +41,7 @@ object GeneratorRunner {
     }
 
     /**
-     * CodeGeneratorRequestから生成するFileSpec(kotlinpoet)を複数生成する
+     * Generate multiple `FileSpec` (kotlinpoet) from `CodeGeneratorRequest`.
      */
     private fun generateFileSpecs(request: CodeGeneratorRequest): List<FileSpec> {
         val compileOptions = CompileOption.parseOptions(request)
@@ -56,12 +51,11 @@ object GeneratorRunner {
 
         return request.fileToGenerateList
             .map { fileDescriptorMap.getValue(it) }
-            .filter { it.toProto().syntax == "proto3" } // proto3のみ対象
+            .filter { it.toProto().syntax == "proto3" } // Only target proto3.
             .map { fileDescriptor ->
                 val fileSpecBuilder = FileSpec.builder(
-                    // sub packageを使っておく (同名でconflictすることを避けたい)
-                    fileDescriptor.javaPackage + ".kotlin.ext",
-                    fileDescriptor.protoFileName.pascalCase() + "Extensions",
+                    fileDescriptor.javaPackage,
+                    fileDescriptor.protoFileName.pascalCase() + "KtExtensions",
                 )
                 generators.forEach { it.apply(fileSpecBuilder, fileDescriptor) }
                 fileSpecBuilder.build()
@@ -87,7 +81,7 @@ object GeneratorRunner {
     }
 
     /**
-     * stdoutにCodeGeneratorResponseを出力する
+     * Output `CodeGeneratorResponse` to stdout.
      */
     private fun writeGeneratorResponse(generatorResponse: CodeGeneratorResponse) {
         System.out.buffered().use { output ->

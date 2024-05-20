@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package example;
+
+option java_multiple_files = false;
+
+import "google/protobuf/timestamp.proto";
+
+message NoneJavaPackage {
+  optional string name = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}

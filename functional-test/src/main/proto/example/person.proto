@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = false;
+
+message Person {
+  string first_name = 1;
+  string last_name = 2;
+  optional string middle_name = 3;
+  Gender gender = 4;
+  optional string nickname = 5;
+  Address primary_address = 6;
+}
+
+enum Gender {
+  GENDER_UNSPECIFIED = 0;
+  MALE = 1;
+  FEMALE = 2;
+  OTHERS = 3;
+}
+
+message Address {
+  string country = 1;
+  string state = 2;
+  string city = 3;
+  string address_line_1 = 4;
+  optional string address_line_2 = 5;
+}

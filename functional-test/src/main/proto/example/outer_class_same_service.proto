@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = false;
+
+import "google/protobuf/timestamp.proto";
+
+service OuterClassSameService {
+}
+
+message OuterClassSameServiceMessage {
+  optional string name = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}

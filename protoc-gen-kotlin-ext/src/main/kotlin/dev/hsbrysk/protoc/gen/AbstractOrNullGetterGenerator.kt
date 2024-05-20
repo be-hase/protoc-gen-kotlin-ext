@@ -50,7 +50,7 @@ abstract class AbstractOrNullGetterGenerator : Generator {
         fieldDescriptor: FieldDescriptor,
     ): PropertySpec {
         return PropertySpec.builder(fieldDescriptor.javaName + "OrNull", fieldDescriptor.typeName).apply {
-            receiver(ClassName(messageDescriptor.javaPackage, messageDescriptor.name))
+            receiver(ClassName(messageDescriptor.javaPackage, messageDescriptor.name + "OrBuilder"))
             getter(
                 FunSpec.getterBuilder()
                     .addStatement(

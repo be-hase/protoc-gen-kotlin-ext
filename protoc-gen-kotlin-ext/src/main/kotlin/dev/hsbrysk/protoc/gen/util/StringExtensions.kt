@@ -1,7 +1,7 @@
 package dev.hsbrysk.protoc.gen.util
 
 /**
- * kebab case or snake caseをpascal case(a.k.a upper camel case)に変換します
+ * Convert kebab case or snake case to Pascal case (a.k.a. upper camel case).
  */
 internal fun String.pascalCase(): String {
     return hyphenToUnderscore().split("_").joinToString("") { value ->
@@ -10,7 +10,7 @@ internal fun String.pascalCase(): String {
 }
 
 /**
- * kebab case or snake caseをcamel caseに変換します
+ * Convert kebab case or snake case to camel case.
  */
 internal fun String.camelCase(): String {
     return hyphenToUnderscore().split("_").withIndex().joinToString("") { (index, value) ->

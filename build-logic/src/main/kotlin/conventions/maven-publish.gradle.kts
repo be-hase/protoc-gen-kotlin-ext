@@ -1,7 +1,5 @@
 package conventions
 
-import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
@@ -16,9 +14,6 @@ mavenPublishing {
         project.group.toString(),
         project.name,
         project.version.toString(),
-    )
-    configure(
-        KotlinJvm(javadocJar = JavadocJar.Dokka("dokkaHtml"), sourcesJar = true),
     )
     pom {
         name = project.name

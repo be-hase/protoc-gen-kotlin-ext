@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+message AllTypeMessage {
+  double double_fd = 1;
+  optional double op_double_fd = 2;
+  repeated double rp_double_fd = 3;
+  float float_fd = 4;
+  optional float op_float_fd = 5;
+  repeated float rp_float_fd = 6;
+  int32 int32_fd = 7;
+  optional int32 op_int32_fd = 8;
+  repeated int32 rp_int32_fd = 9;
+  int64 int64_fd = 10;
+  optional int64 op_int64_fd = 11;
+  repeated int64 rp_int64_fd = 12;
+  uint32 uint32_fd = 13;
+  optional uint32 op_uint32_fd = 14;
+  repeated uint32 rp_uint32_fd = 15;
+  uint64 uint64_fd = 16;
+  optional uint64 op_uint64_fd = 17;
+  repeated uint64 rp_uint64_fd = 18;
+  sint32 sint32_fd = 19;
+  optional sint64 op_sint32_fd = 20;
+  repeated sint64 rp_sint32_fd = 21;
+  sint64 sint64_fd = 22;
+  optional sint64 op_sint64_fd = 46;
+  repeated sint64 rp_sint64_fd = 23;
+  fixed32 fixed32_fd = 24;
+  optional fixed32 op_fixed32_fd = 25;
+  repeated fixed32 rp_fixed32_fd = 26;
+  fixed64 fixed64_fd = 27;
+  optional fixed64 op_fixed64_fd = 28;
+  repeated fixed64 rp_fixed64_fd = 29;
+  sfixed32 sfixed32_fd = 30;
+  optional sfixed32 op_sfixed32_fd = 31;
+  repeated sfixed32 rp_sfixed32_fd = 32;
+  sfixed64 sfixed64_fd = 33;
+  optional sfixed64 op_sfixed64_fd = 34;
+  repeated sfixed64 rp_sfixed64_fd = 35;
+  bool bool_fd = 36;
+  optional bool op_bool_fd = 37;
+  repeated bool rp_bool_fd = 39;
+  string string_fd = 40;
+  optional string op_string_fd = 41;
+  repeated string rp_string_fd = 42;
+  bytes bytes_fd = 43;
+  optional bytes op_bytes_fd = 44;
+  repeated bytes rp_bytes_fd = 45;
+  google.protobuf.Timestamp timestamp_fd = 47;
+  optional google.protobuf.Timestamp op_timestamp_fd = 48;
+  repeated google.protobuf.Timestamp rp_timestamp_fd = 49;
+  oneof test_one_of {
+    string one_of_a = 50;
+    string one_of_b = 51;
+  }
+  AllTypeMessageEnum enum_fd = 52;
+  optional AllTypeMessageEnum op_enum_fd = 53;
+  repeated AllTypeMessageEnum rp_enum_fd = 54;
+  map<string, google.protobuf.Timestamp> map_fd = 55;
+}
+
+enum AllTypeMessageEnum {
+  ALL_UNSPECIFIED = 0;
+}

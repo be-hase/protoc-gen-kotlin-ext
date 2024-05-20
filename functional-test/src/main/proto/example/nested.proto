@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = false;
+
+import "google/protobuf/timestamp.proto";
+
+// memo: On proto, it is possible to nest with the same name class, but protoc-gen-java generates code that results in a compile error.
+
+message Enclosing {
+  optional string name = 1;
+  google.protobuf.Timestamp timestamp = 2;
+
+  message Nested1 {
+    optional string name = 1;
+    google.protobuf.Timestamp timestamp = 2;
+
+    message Nested2 {
+      optional string name = 1;
+      google.protobuf.Timestamp timestamp = 2;
+    }
+  }
+}

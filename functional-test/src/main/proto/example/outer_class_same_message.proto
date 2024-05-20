@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = false;
+
+import "google/protobuf/timestamp.proto";
+
+message OuterClassSameMessage {
+  optional string name = 1;
+  google.protobuf.Timestamp timestamp = 2;
+
+  message Nested1 {
+    optional string name = 1;
+    google.protobuf.Timestamp timestamp = 2;
+
+    message Nested2 {
+      optional string name = 1;
+      google.protobuf.Timestamp timestamp = 2;
+    }
+  }
+}
