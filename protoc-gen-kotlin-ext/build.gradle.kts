@@ -6,7 +6,7 @@ plugins {
     application
 }
 
-description = "A protoc compiler plugin that generates extension code for Kotlin"
+description = "A protoc compiler plugin that generates useful extension code for Kotlin"
 
 dependencies {
     implementation(libs.protobuf.java)
