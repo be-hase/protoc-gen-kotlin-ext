@@ -1,6 +1,7 @@
 package example.protocol
 
 import assertk.assertThat
+import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import example.protocol.PersonOuterClass.Person
 import org.junit.jupiter.api.Test
@@ -26,5 +27,6 @@ class PersonTest {
         assertThat(person.middleNameOrNull).isNull()
         assertThat(person.nicknameOrNull).isNull()
         assertThat(person.primaryAddress.addressLine2OrNull).isNull()
+        assertThat(person.primaryAddressOrNull).isNotNull()
     }
 }

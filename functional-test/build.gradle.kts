@@ -9,8 +9,13 @@ plugins {
 
 description = "Function test module for protoc-gen-kotlin-ext"
 
+val withProtocGenKotlin = providers.gradleProperty("withProtocGenKotlin").isPresent
+
 dependencies {
     implementation(libs.protobuf.java)
+    if (withProtocGenKotlin) {
+        implementation(libs.protobuf.kotlin)
+    }
     implementation(libs.grpc.java.protobuf)
     implementation(libs.grpc.kotlin.stub)
 }
@@ -35,16 +40,23 @@ protobuf {
         all().forEach { task ->
             task.dependsOn(":protoc-gen-kotlin-ext:installDist")
 
+            if (withProtocGenKotlin) {
+                task.builtins {
+                    id("kotlin")
+                }
+            }
             task.plugins {
                 id("kotlin-ext") {
                     outputSubDir = "kotlin"
-                    option("messageOrNullGetter+")
+                    if (!withProtocGenKotlin) {
+                        option("messageOrNullGetter+")
+                    }
                 }
-                // Test to ensure there are no issues when using grpc-java.
+                // Test to ensure there are no issues when using gen-grpc-java.
                 id("grpc") {
                     outputSubDir = "java"
                 }
-                // Test to ensure there are no issues when using grpc-kotlin.
+                // Test to ensure there are no issues when using gen-grpc-kotlin.
                 id("grpckt") {
                     outputSubDir = "kotlin"
                 }
