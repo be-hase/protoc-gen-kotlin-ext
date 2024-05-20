@@ -76,11 +76,17 @@ tasks.sonatypeCentralUpload {
     signingKey = providers.environmentVariable("SIGNING_PGP_KEY").orNull
     signingKeyPassphrase = providers.environmentVariable("SIGNING_PGP_PASSWORD").orNull
 
-    archives = (
-        tasks.jar.get().outputs.files +
-            tasks.sourcesJar.get().outputs.files +
-            tasks.javadocJar.get().outputs.files
-        )
+    val originalJar = tasks.jar.get().outputs.files.singleFile
+    val renamedJar = File(originalJar.path.removeSuffix(".jar") + "-jdk8.jar")
+    doFirst {
+        originalJar.copyTo(renamedJar, overwrite = true)
+    }
+
+    archives = files(
+        renamedJar,
+        tasks.sourcesJar.get().outputs.files.singleFile,
+        tasks.javadocJar.get().outputs.files.singleFile,
+    )
     pom = file(
         tasks.named("generatePomFileForMavenPublication").get().outputs.files.single(),
     )
