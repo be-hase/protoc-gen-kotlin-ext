@@ -133,7 +133,7 @@ class DescriptorExtensionsTest {
             }.javaName,
         ).isEqualTo("hogeBar")
 
-        // repeatedのときはList suffixがつく
+        // When repeated, a List suffix is added.
         assertThat(
             mockk<FieldDescriptor> {
                 every { isMapField } returns false
@@ -142,13 +142,13 @@ class DescriptorExtensionsTest {
             }.javaName,
         ).isEqualTo("hogeBarList")
 
-        // mapもrepeatedだが、mapのときはList suffixがつかない
+        // When map, a Map suffix is added.
         assertThat(
             mockk<FieldDescriptor> {
                 every { isMapField } returns true
                 every { name } returns "hoge_bar"
             }.javaName,
-        ).isEqualTo("hogeBar")
+        ).isEqualTo("hogeBarMap")
     }
 
     @TestFactory
