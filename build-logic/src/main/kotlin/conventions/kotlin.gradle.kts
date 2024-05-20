@@ -11,6 +11,8 @@ java {
         languageVersion = JavaLanguageVersion.of(8)
         vendor = JvmVendorSpec.ADOPTIUM
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 kotlin {
@@ -21,6 +23,12 @@ kotlin {
             "-Xjsr305=strict",
         )
     }
+}
+
+// - https://github.com/junit-team/junit5/issues/3474
+// - https://youtrack.jetbrains.com/issue/KT-54207/Kotlin-has-two-sources-tasks-kotlinSourcesJar-and-sourcesJar-that-archives-sources-to-the-same-artifact
+tasks.named("kotlinSourcesJar") {
+    enabled = false
 }
 
 val libs = the<LibrariesForLibs>()
