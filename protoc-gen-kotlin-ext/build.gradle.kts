@@ -91,5 +91,5 @@ tasks.sonatypeCentralUpload {
         tasks.named("generatePomFileForMavenPublication").get().outputs.files.single(),
     )
 
-    publishingType = "MANUAL"
+    publishingType = "AUTOMATIC"
 }
