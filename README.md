@@ -82,7 +82,7 @@ protobuf {
     }
     plugins {
         id("kotlin-ext") {
-            artifact = "dev.hsbrysk:protoc-gen-kotlin-ext:<version>"
+            artifact = "dev.hsbrysk:protoc-gen-kotlin-ext:<version>:jdk8@jar"
         }
     }
     generateProtoTasks {
@@ -109,7 +109,7 @@ protobuf {
     }
     plugins {
         id("kotlin-ext") {
-            artifact = "dev.hsbrysk:protoc-gen-kotlin-ext:<version>"
+            artifact = "dev.hsbrysk:protoc-gen-kotlin-ext:<version>:jdk8@jar"
         }
     }
     generateProtoTasks {
