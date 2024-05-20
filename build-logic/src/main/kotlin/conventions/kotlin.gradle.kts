@@ -29,6 +29,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(libs.assertk)
+    testImplementation(libs.mockk.core)
 }
 
 tasks.withType<Test> {

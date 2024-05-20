@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "protoc-gen-kotlin-ext"
 
-//include("caffeine-coroutines")
+include("protoc-gen-kotlin-ext")
