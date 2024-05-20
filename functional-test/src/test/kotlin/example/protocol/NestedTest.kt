@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2023-2024 LY Corporation. All rights reserved.
- * LY Corporation PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
 package example.protocol
 
 import assertk.assertThat
