@@ -1,0 +1,14 @@
+[versions]
+kotlin-core = "1.9.24"
+ktlint = "1.2.1"
+
+[libraries]
+assertk = { module = "com.willowtreeapps.assertk:assertk-jvm", version = "0.28.1" }
+junit-bom = { module = "org.junit:junit-bom", version = "5.10.2" }
+
+# gradle plugins for build-logic
+gradle-plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version = "1.23.6" }
+gradle-plugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version = "1.9.20" }
+gradle-plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-core" }
+gradle-plugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "12.1.1" }
+gradle-plugin-maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version = "0.28.0" }
