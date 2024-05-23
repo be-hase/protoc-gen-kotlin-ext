@@ -6,7 +6,7 @@ A protoc compiler plugin that generates useful extension code for Kotlin.
 
 - Generate `*OrNull` extension properties for optional field
     - In [protoc-gen-kotlin](https://protobuf.dev/getting-started/kotlintutorial/), this extension properties is only
-      provided for message types. We will provide it for scalar types as well.
+      provided for message types. We provide it for scalar types as well.
     - https://github.com/protocolbuffers/protobuf/issues/12935
 - Generate factory functions that resemble data class constructors
 - We do not generate our own code, so we can take advantage of the official ecosystem
@@ -256,7 +256,7 @@ Sample(
 
 // Of course, when it is optional, it becomes a nullable type
 Sample(
-    hoge = null, // This code results in a compile error 😆
+    hoge = null, // This code results in a compile error 😀
     bar = 1
 )
 
