@@ -215,7 +215,7 @@ Protobuf uses builders to set values. Since this code is written in Java, there 
 When used from Kotlin, it is often misunderstood that it is okay to set null for optional fields, which results in
 passing null and encountering NPEs (NullPointerExceptions).
 
-```
+```kotlin
 Sample.newBuilder()
     .setHoge(null) // This code raises NPE 😭
     .setBar(1)
@@ -280,7 +280,7 @@ If you want to use default values, you can use java builder or kotlin DSL.
 
 ### Compile Options
 
-Perhaps you only want the *OrNull extension property and do not need the factory function. (and vice versa).
+Perhaps you only want the `*OrNull` extension property and do not need the factory function. (and vice versa).
 
 This can be achieved by setting the compile options.
 
