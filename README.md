@@ -302,7 +302,7 @@ protobuf {
 }
 ```
 
-The following options are available. Appending + to the end of an option enables it, while appending - disables it.
+The following options are available. Appending `+` to the end of an option enables it, while appending `-` disables it.
 
 - `factory`
     - Whether to generate a factory (default: on)
