@@ -238,8 +238,11 @@ Additionally, just like the builder, the DSL does not result in a compile error 
 lead to cases where values are forgotten to be set. However, opinions may differ on whether this is seen as a
 disadvantage or an advantage.
 
-If you prioritize a more robust programming style, it is preferable to have a compile error indicating that a value has
-been forgotten.
+If it is code provided by libraries or similar, it is better not to do it as it may break
+compatibility.
+
+If it is code used within your own application, I think it is convenient. If you prioritize a more robust programming
+style, it is preferable to have a compile error indicating that a value has been forgotten.
 
 Therefore, we will auto-generate the following factory function. Note that this `Sample(...)` is not a constructor but a
 function.
