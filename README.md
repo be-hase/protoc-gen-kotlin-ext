@@ -1,5 +1,7 @@
 # protoc-gen-kotlin-ext
 
+![Maven Central Version](https://img.shields.io/maven-central/v/dev.hsbrysk/protoc-gen-kotlin-ext)
+
 A protoc compiler plugin that generates useful extension code for Kotlin.
 
 ## Features
