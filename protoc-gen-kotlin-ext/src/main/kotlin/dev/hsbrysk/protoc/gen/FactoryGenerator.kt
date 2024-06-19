@@ -58,9 +58,9 @@ class FactoryGenerator : Generator {
             beginControlFlow("val _builder = %T.newBuilder().apply", className)
             messageDescriptor.fields.forEach { fieldDescriptor ->
                 if (fieldDescriptor.typeName.isNullable) {
-                    addStatement("${fieldDescriptor.javaName}?.let·{ ${fieldDescriptor.builderMethodName}(it) }")
+                    addStatement("%N?.let·{ ${fieldDescriptor.builderMethodName}(it) }", fieldDescriptor.javaName)
                 } else {
-                    addStatement("${fieldDescriptor.builderMethodName}(${fieldDescriptor.javaName})")
+                    addStatement("${fieldDescriptor.builderMethodName}(%N)", fieldDescriptor.javaName)
                 }
             }
             endControlFlow()
@@ -69,10 +69,20 @@ class FactoryGenerator : Generator {
     }
 
     private val FieldDescriptor.builderMethodName: String
-        get() = when {
-            isMapField -> "putAll${name.pascalCase()}"
-            isRepeated -> "addAll${name.pascalCase()}"
-            else -> "set${name.pascalCase()}"
+        get() {
+            return if (name == "class") {
+                when {
+                    isMapField -> "putAllClass_"
+                    isRepeated -> "addAllClass_"
+                    else -> "setClass_"
+                }
+            } else {
+                when {
+                    isMapField -> "putAll${name.pascalCase()}"
+                    isRepeated -> "addAll${name.pascalCase()}"
+                    else -> "set${name.pascalCase()}"
+                }
+            }
         }
 
     // Create an interface to handle `FileSpec.Builder` and `TypeSpec.Builder` transparently in `applyRecursively`.

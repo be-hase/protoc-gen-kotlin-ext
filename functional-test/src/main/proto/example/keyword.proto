@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = true;
+
+message BasicClass {
+  string class = 1;
+}
+
+message OptionalClass {
+  optional string class = 1;
+}
+
+message RepeatedClass {
+  repeated string class = 1;
+}
+
+message MapClass {
+  map<string, string> class = 1;
+}
+
+message Keyword {
+  string return = 1;
+  optional string if = 2;
+}

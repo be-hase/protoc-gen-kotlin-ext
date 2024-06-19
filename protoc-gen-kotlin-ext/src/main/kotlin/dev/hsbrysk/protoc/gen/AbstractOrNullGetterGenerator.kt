@@ -54,7 +54,8 @@ abstract class AbstractOrNullGetterGenerator : Generator {
             getter(
                 FunSpec.getterBuilder()
                     .addStatement(
-                        "return if (${fieldDescriptor.hasMethodName}()) ${fieldDescriptor.javaName} else null",
+                        "return if (${fieldDescriptor.hasMethodName}()) %N else null",
+                        fieldDescriptor.javaName,
                     )
                     .build(),
             )
@@ -62,5 +63,11 @@ abstract class AbstractOrNullGetterGenerator : Generator {
     }
 
     private val FieldDescriptor.hasMethodName: String
-        get() = "has${name.pascalCase()}"
+        get() {
+            return if (name == "class") {
+                "hasClass_"
+            } else {
+                "has${name.pascalCase()}"
+            }
+        }
 }

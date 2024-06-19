@@ -100,7 +100,11 @@ private fun enclosingClassNames(
  */
 internal val FieldDescriptor.javaName: String
     get() {
-        val name = name.camelCase()
+        val name = if (name == "class") {
+            "class_"
+        } else {
+            name.camelCase()
+        }
         return when {
             isMapField -> name + "Map" // Actually, maps are internally repeated, so they should be checked first.
             isRepeated -> name + "List"
