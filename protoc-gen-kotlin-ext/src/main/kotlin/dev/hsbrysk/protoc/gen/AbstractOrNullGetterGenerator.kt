@@ -48,19 +48,17 @@ abstract class AbstractOrNullGetterGenerator : Generator {
     private fun buildPropertySpec(
         messageDescriptor: Descriptor,
         fieldDescriptor: FieldDescriptor,
-    ): PropertySpec {
-        return PropertySpec.builder(fieldDescriptor.javaName + "OrNull", fieldDescriptor.typeName).apply {
-            receiver(ClassName(messageDescriptor.javaPackage, messageDescriptor.name + "OrBuilder"))
-            getter(
-                FunSpec.getterBuilder()
-                    .addStatement(
-                        "return if (${fieldDescriptor.hasMethodName}()) %N else null",
-                        fieldDescriptor.javaName,
-                    )
-                    .build(),
-            )
-        }.build()
-    }
+    ): PropertySpec = PropertySpec.builder(fieldDescriptor.javaName + "OrNull", fieldDescriptor.typeName).apply {
+        receiver(ClassName(messageDescriptor.javaPackage, messageDescriptor.name + "OrBuilder"))
+        getter(
+            FunSpec.getterBuilder()
+                .addStatement(
+                    "return if (${fieldDescriptor.hasMethodName}()) %N else null",
+                    fieldDescriptor.javaName,
+                )
+                .build(),
+        )
+    }.build()
 
     private val FieldDescriptor.hasMethodName: String
         get() {

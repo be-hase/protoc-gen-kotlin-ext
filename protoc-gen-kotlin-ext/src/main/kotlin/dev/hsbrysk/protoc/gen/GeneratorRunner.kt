@@ -36,8 +36,8 @@ object GeneratorRunner {
      * Parse `CodeGeneratorRequest` from stdin.
      * ref: https://github.com/protocolbuffers/protobuf/blob/8f831e973a93a1c204abd27b545622ae1d82cae0/src/google/protobuf/compiler/plugin.proto
      */
-    private fun parseGeneratorRequest(): CodeGeneratorRequest {
-        return System.`in`.buffered().use { CodeGeneratorRequest.parseFrom(it) }
+    private fun parseGeneratorRequest(): CodeGeneratorRequest = System.`in`.buffered().use {
+        CodeGeneratorRequest.parseFrom(it)
     }
 
     /**
