@@ -57,10 +57,8 @@ enum class CompileOption(private val option: String) {
     }
 }
 
-fun CompileOption.generator(): Generator {
-    return when (this) {
-        CompileOption.FACTORY -> FactoryGenerator()
-        CompileOption.OR_NULL_GETTER -> OrNullGetterGenerator()
-        CompileOption.MESSAGE_OR_NULL_GETTER -> MessageOrNullGetterGenerator()
-    }
+fun CompileOption.generator(): Generator = when (this) {
+    CompileOption.FACTORY -> FactoryGenerator()
+    CompileOption.OR_NULL_GETTER -> OrNullGetterGenerator()
+    CompileOption.MESSAGE_OR_NULL_GETTER -> MessageOrNullGetterGenerator()
 }
