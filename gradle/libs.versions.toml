@@ -11,7 +11,7 @@ grpc-java-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc-jav
 grpc-java-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc-java" }
 grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpc-kotlin" }
 junit-bom = { module = "org.junit:junit-bom", version = "5.11.3" }
-kotlinpoet = { module = "com.squareup:kotlinpoet", version = "1.18.1" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.0.0" }
 ktlint-rule-engine-core = { module = "com.pinterest.ktlint:ktlint-rule-engine-core", version.ref = "ktlint" }
 mockk-core = { module = "io.mockk:mockk", version = "1.13.13" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
