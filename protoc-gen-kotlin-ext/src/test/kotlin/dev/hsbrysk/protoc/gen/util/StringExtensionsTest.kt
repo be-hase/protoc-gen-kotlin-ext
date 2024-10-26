@@ -13,6 +13,7 @@ class StringExtensionsTest {
         assertThat("Hoge-Bar".pascalCase()).isEqualTo("HogeBar")
         assertThat("Hoge_Bar".pascalCase()).isEqualTo("HogeBar")
         assertThat("あ-_い".pascalCase()).isEqualTo("あい")
+        assertThat("k8s_cluster".pascalCase()).isEqualTo("K8SCluster")
     }
 
     @Test
@@ -23,5 +24,6 @@ class StringExtensionsTest {
         assertThat("Hoge-Bar".camelCase()).isEqualTo("hogeBar")
         assertThat("Hoge_Bar".camelCase()).isEqualTo("hogeBar")
         assertThat("あ-_い".camelCase()).isEqualTo("あい")
+        assertThat("K8s_cluster".camelCase()).isEqualTo("k8SCluster")
     }
 }
