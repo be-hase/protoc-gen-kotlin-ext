@@ -20,7 +20,7 @@ protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref 
 # gradle plugins for build-logic
 gradle-plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version = "1.23.8" }
 gradle-plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-core" }
-gradle-plugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "12.1.2" }
+gradle-plugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "12.2.0" }
 
 [plugins]
 protobuf = { id = "com.google.protobuf", version = "0.9.4" }
