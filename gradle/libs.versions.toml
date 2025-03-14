@@ -10,7 +10,7 @@ assertk = { module = "com.willowtreeapps.assertk:assertk-jvm", version = "0.28.1
 grpc-java-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc-java" }
 grpc-java-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc-java" }
 grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpc-kotlin" }
-junit-bom = { module = "org.junit:junit-bom", version = "5.12.0" }
+junit-bom = { module = "org.junit:junit-bom", version = "5.12.1" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version = "2.1.0" }
 ktlint-rule-engine-core = { module = "com.pinterest.ktlint:ktlint-rule-engine-core", version.ref = "ktlint" }
 mockk-core = { module = "io.mockk:mockk", version = "1.13.17" }
