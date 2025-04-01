@@ -23,5 +23,5 @@ gradle-plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 gradle-plugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "12.2.0" }
 
 [plugins]
-protobuf = { id = "com.google.protobuf", version = "0.9.4" }
+protobuf = { id = "com.google.protobuf", version = "0.9.5" }
 sonatype-central-upload = { id = "cl.franciscosolis.sonatype-central-upload", version = "1.0.3" }
