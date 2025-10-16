@@ -3,7 +3,7 @@ grpc-java = "1.76.0"
 grpc-kotlin = "1.4.3"
 kotlin-core = "2.2.20"
 ktlint = "1.7.1"
-protobuf = "4.32.1"
+protobuf = "4.33.0"
 
 [libraries]
 assertk = { module = "com.willowtreeapps.assertk:assertk-jvm", version = "0.28.1" }
