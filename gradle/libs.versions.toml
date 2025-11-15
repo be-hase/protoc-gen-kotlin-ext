@@ -2,7 +2,7 @@
 grpc-java = "1.76.0"
 grpc-kotlin = "1.4.3"
 kotlin-core = "2.2.21"
-ktlint = "1.7.1"
+ktlint = "1.8.0"
 protobuf = "4.33.1"
 
 [libraries]
