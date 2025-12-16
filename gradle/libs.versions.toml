@@ -1,7 +1,7 @@
 [versions]
 grpc-java = "1.77.0"
 grpc-kotlin = "1.4.3"
-kotlin-core = "2.2.21"
+kotlin-core = "2.3.0"
 ktlint = "1.8.0"
 protobuf = "4.33.2"
 
