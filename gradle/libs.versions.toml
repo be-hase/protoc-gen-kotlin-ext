@@ -1,5 +1,5 @@
 [versions]
-grpc-java = "1.77.0"
+grpc-java = "1.78.0"
 grpc-kotlin = "1.4.3"
 kotlin-core = "2.3.0"
 ktlint = "1.8.0"
