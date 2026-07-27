@@ -25,3 +25,17 @@ message Keyword {
   string return = 1;
   optional string if = 2;
 }
+
+// protoc escapes fields whose UpperCamelCase name collides with methods of
+// java.lang.Object / MessageLite / MessageOrBuilder by appending "_".
+// ref: kForbiddenNames in protobuf's src/google/protobuf/compiler/java/names.cc
+message ForbiddenName {
+  string serialized_size = 1;
+  optional string cached_size = 2;
+  repeated string unknown_fields = 3;
+  map<string, string> all_fields = 4;
+  string descriptor_for_type = 5;
+  string initialization_error_string = 6;
+  string default_instance_for_type = 7;
+  string parser_for_type = 8;
+}

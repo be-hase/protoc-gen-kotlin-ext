@@ -38,4 +38,27 @@ class KeywordTest {
         assertThat(result.`if`).isEqualTo("")
         assertThat(result.ifOrNull).isEqualTo(null)
     }
+
+    @Test
+    fun `compileCheck ForbiddenName`() {
+        val result: ForbiddenName = ForbiddenName(
+            serializedSize_ = "hoge",
+            cachedSize_ = null,
+            unknownFields_List = listOf("hoge"),
+            allFields_Map = mapOf("hoge" to "hogeVal"),
+            descriptorForType_ = "hoge",
+            initializationErrorString_ = "hoge",
+            defaultInstanceForType_ = "hoge",
+            parserForType_ = "hoge",
+        )
+        assertThat(result.serializedSize_).isEqualTo("hoge")
+        assertThat(result.cachedSize_).isEqualTo("")
+        assertThat(result.cachedSize_OrNull).isEqualTo(null)
+        assertThat(result.unknownFields_List).isEqualTo(listOf("hoge"))
+        assertThat(result.allFields_Map).isEqualTo(mapOf("hoge" to "hogeVal"))
+        assertThat(result.descriptorForType_).isEqualTo("hoge")
+        assertThat(result.initializationErrorString_).isEqualTo("hoge")
+        assertThat(result.defaultInstanceForType_).isEqualTo("hoge")
+        assertThat(result.parserForType_).isEqualTo("hoge")
+    }
 }

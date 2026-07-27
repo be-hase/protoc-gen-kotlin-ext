@@ -100,8 +100,8 @@ private fun enclosingClassNames(
  */
 internal val FieldDescriptor.javaName: String
     get() {
-        val name = if (name == "class") {
-            "class_"
+        val name = if (isForbiddenJavaName) {
+            name.camelCase() + "_"
         } else {
             name.camelCase()
         }
@@ -111,6 +111,41 @@ internal val FieldDescriptor.javaName: String
             else -> name
         }
     }
+
+/**
+ * The PascalCase field name used to build Java accessor method names
+ * (e.g. `set{Name}`, `has{Name}`, `addAll{Name}`).
+ */
+internal val FieldDescriptor.javaPascalName: String
+    get() = if (isForbiddenJavaName) {
+        name.pascalCase() + "_"
+    } else {
+        name.pascalCase()
+    }
+
+// protoc's Java generator appends a trailing "_" to fields whose PascalCase name would
+// collide with methods of the generated message's base classes (java.lang.Object,
+// MessageLite, MessageOrBuilder).
+// Keep in sync with `kForbiddenNames` in protobuf's src/google/protobuf/compiler/java/names.cc
+private val forbiddenJavaNames = setOf(
+    // java.lang.Object:
+    "Class",
+    // com.google.protobuf.MessageLiteOrBuilder:
+    "DefaultInstanceForType",
+    // com.google.protobuf.MessageLite:
+    "ParserForType",
+    "SerializedSize",
+    // com.google.protobuf.MessageOrBuilder:
+    "AllFields",
+    "DescriptorForType",
+    "InitializationErrorString",
+    "UnknownFields",
+    // obsolete. kept for backwards compatibility of generated code
+    "CachedSize",
+)
+
+private val FieldDescriptor.isForbiddenJavaName: Boolean
+    get() = name.pascalCase() in forbiddenJavaNames
 
 /**
  * kotlinpoetのTypeName

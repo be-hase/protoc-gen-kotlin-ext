@@ -9,7 +9,7 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.PropertySpec
 import dev.hsbrysk.protoc.gen.util.javaName
 import dev.hsbrysk.protoc.gen.util.javaPackage
-import dev.hsbrysk.protoc.gen.util.pascalCase
+import dev.hsbrysk.protoc.gen.util.javaPascalName
 import dev.hsbrysk.protoc.gen.util.typeName
 
 abstract class AbstractOrNullGetterGenerator : Generator {
@@ -61,11 +61,5 @@ abstract class AbstractOrNullGetterGenerator : Generator {
     }.build()
 
     private val FieldDescriptor.hasMethodName: String
-        get() {
-            return if (name == "class") {
-                "hasClass_"
-            } else {
-                "has${name.pascalCase()}"
-            }
-        }
+        get() = "has$javaPascalName"
 }
