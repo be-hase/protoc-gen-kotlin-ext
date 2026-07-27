@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = true;
+
+// protoc appends the field number to the accessors of both fields when two fields
+// in the same message would generate conflicting accessor names.
+// ref: IsConflicting in protobuf's src/google/protobuf/compiler/java/context.cc
+message ListConflict {
+  string foo_list = 1;
+  repeated string foo = 2;
+}
+
+message CountConflict {
+  optional string bar_count = 1;
+  repeated string bar = 2;
+}
+
+message MapConflict {
+  string baz_count = 1;
+  map<string, string> baz = 2;
+}
+
+enum ConflictColor {
+  CONFLICT_COLOR_UNSPECIFIED = 0;
+  CONFLICT_COLOR_RED = 1;
+}
+
+message EnumValueConflict {
+  ConflictColor color = 1;
+  string color_value = 2;
+}

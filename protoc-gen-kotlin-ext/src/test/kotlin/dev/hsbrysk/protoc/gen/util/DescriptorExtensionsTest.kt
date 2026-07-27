@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.google.protobuf.ByteString
 import com.google.protobuf.DescriptorProtos.DescriptorProto
+import com.google.protobuf.DescriptorProtos.FieldDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileOptions
 import com.google.protobuf.Descriptors.Descriptor
@@ -125,11 +126,16 @@ class DescriptorExtensionsTest {
 
     @Test
     fun `FieldDescriptor javaName`() {
+        val noOtherFields: Descriptor = mockk {
+            every { fields } returns emptyList()
+        }
+
         assertThat(
             mockk<FieldDescriptor> {
                 every { isMapField } returns false
                 every { isRepeated } returns false
                 every { name } returns "hoge_bar"
+                every { containingType } returns noOtherFields
             }.javaName,
         ).isEqualTo("hogeBar")
 
@@ -139,6 +145,7 @@ class DescriptorExtensionsTest {
                 every { isMapField } returns false
                 every { isRepeated } returns true
                 every { name } returns "hoge_bar"
+                every { containingType } returns noOtherFields
             }.javaName,
         ).isEqualTo("hogeBarList")
 
@@ -146,9 +153,47 @@ class DescriptorExtensionsTest {
         assertThat(
             mockk<FieldDescriptor> {
                 every { isMapField } returns true
+                every { isRepeated } returns true
                 every { name } returns "hoge_bar"
+                every { containingType } returns noOtherFields
             }.javaName,
         ).isEqualTo("hogeBarMap")
+    }
+
+    @Test
+    fun `FieldDescriptor javaName conflicting accessor names`() {
+        // `string foo_list = 1;` and `repeated string foo = 2;` both generate `getFooList()`,
+        // so protoc appends the field number to both.
+        val listConflict = buildMessage(
+            stringField("foo_list", 1),
+            stringField("foo", 2, repeated = true),
+        )
+        assertThat(listConflict.fields[0].javaName).isEqualTo("fooList1")
+        assertThat(listConflict.fields[1].javaName).isEqualTo("foo2List")
+
+        val countConflict = buildMessage(
+            stringField("bar_count", 1),
+            stringField("bar", 2, repeated = true),
+        )
+        assertThat(countConflict.fields[0].javaName).isEqualTo("barCount1")
+        assertThat(countConflict.fields[1].javaName).isEqualTo("bar2List")
+
+        // Fields whose capitalized names are identical also conflict.
+        // (Only possible in proto2; proto3 rejects it as a JSON name conflict.)
+        val sameName = buildProto2Message(
+            stringField("foo_bar", 1),
+            stringField("fooBar", 2),
+        )
+        assertThat(sameName.fields[0].javaName).isEqualTo("fooBar1")
+        assertThat(sameName.fields[1].javaName).isEqualTo("fooBar2")
+
+        // Both singular: no conflict, no field number.
+        val noConflict = buildMessage(
+            stringField("baz_list", 1),
+            stringField("baz", 2),
+        )
+        assertThat(noConflict.fields[0].javaName).isEqualTo("bazList")
+        assertThat(noConflict.fields[1].javaName).isEqualTo("baz")
     }
 
     @TestFactory
@@ -256,6 +301,39 @@ class DescriptorExtensionsTest {
             }.typeName,
         ).isEqualTo(LIST.parameterizedBy(String::class.asTypeName()))
     }
+
+    private fun buildMessage(vararg fields: FieldDescriptorProto): Descriptor = buildMessage("proto3", *fields)
+
+    // proto2 is only needed for conflict cases that proto3 rejects at the protoc level
+    // (e.g. identical capitalized names).
+    private fun buildProto2Message(vararg fields: FieldDescriptorProto): Descriptor = buildMessage("proto2", *fields)
+
+    private fun buildMessage(
+        syntax: String,
+        vararg fields: FieldDescriptorProto,
+    ): Descriptor = FileDescriptor.buildFrom(
+        FileDescriptorProto.newBuilder().setName("conflict.proto").setSyntax(syntax)
+            .addMessageType(DescriptorProto.newBuilder().setName("Conflict").addAllField(fields.toList()))
+            .build(),
+        arrayOf(),
+    ).messageTypes.first()
+
+    private fun stringField(
+        name: String,
+        number: Int,
+        repeated: Boolean = false,
+    ): FieldDescriptorProto = FieldDescriptorProto.newBuilder()
+        .setName(name)
+        .setNumber(number)
+        .setType(FieldDescriptorProto.Type.TYPE_STRING)
+        .setLabel(
+            if (repeated) {
+                FieldDescriptorProto.Label.LABEL_REPEATED
+            } else {
+                FieldDescriptorProto.Label.LABEL_OPTIONAL
+            },
+        )
+        .build()
 
     @Test
     fun `FieldDescriptor typeName hasPresence`() {
