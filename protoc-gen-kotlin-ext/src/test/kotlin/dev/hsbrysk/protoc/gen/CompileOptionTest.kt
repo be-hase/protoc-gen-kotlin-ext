@@ -52,6 +52,46 @@ class CompileOptionTest {
     }
 
     @Test
+    fun `parseOptions disable individually`() {
+        assertThat(
+            CompileOption.parseOptions(
+                PluginProtos.CodeGeneratorRequest.newBuilder()
+                    .setParameter("orNullGetter-")
+                    .build(),
+            ),
+        ).isEqualTo(setOf(FACTORY))
+
+        // Disabling an option that is off by default is also fine.
+        assertThat(
+            CompileOption.parseOptions(
+                PluginProtos.CodeGeneratorRequest.newBuilder()
+                    .setParameter("messageOrNullGetter-")
+                    .build(),
+            ),
+        ).isEqualTo(setOf(FACTORY, OR_NULL_GETTER))
+    }
+
+    @Test
+    fun `parseOptions duplicated`() {
+        // The last specification wins.
+        assertThat(
+            CompileOption.parseOptions(
+                PluginProtos.CodeGeneratorRequest.newBuilder()
+                    .setParameter("factory-, factory+")
+                    .build(),
+            ),
+        ).isEqualTo(setOf(FACTORY, OR_NULL_GETTER))
+
+        assertThat(
+            CompileOption.parseOptions(
+                PluginProtos.CodeGeneratorRequest.newBuilder()
+                    .setParameter("factory+, factory-")
+                    .build(),
+            ),
+        ).isEqualTo(setOf(OR_NULL_GETTER))
+    }
+
+    @Test
     fun `parseOptions error`() {
         assertFailure {
             CompileOption.parseOptions(

@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = false;
+
+// protoc-gen-kotlin-ext only targets proto3, so no extension code is generated for this file.
+message LegacyMessage {
+  optional string name = 1;
+}
