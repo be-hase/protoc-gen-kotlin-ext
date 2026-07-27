@@ -100,11 +100,7 @@ private fun enclosingClassNames(
  */
 internal val FieldDescriptor.javaName: String
     get() {
-        val name = if (isForbiddenJavaName) {
-            name.camelCase() + "_"
-        } else {
-            name.camelCase()
-        }
+        val name = escapedCamelName + conflictSuffix
         return when {
             isMapField -> name + "Map" // Actually, maps are internally repeated, so they should be checked first.
             isRepeated -> name + "List"
@@ -117,11 +113,70 @@ internal val FieldDescriptor.javaName: String
  * (e.g. `set{Name}`, `has{Name}`, `addAll{Name}`).
  */
 internal val FieldDescriptor.javaPascalName: String
+    get() = escapedPascalName + conflictSuffix
+
+private val FieldDescriptor.escapedCamelName: String
+    get() = if (isForbiddenJavaName) {
+        name.camelCase() + "_"
+    } else {
+        name.camelCase()
+    }
+
+private val FieldDescriptor.escapedPascalName: String
     get() = if (isForbiddenJavaName) {
         name.pascalCase() + "_"
     } else {
         name.pascalCase()
     }
+
+// protoc's Java generator appends the field number to the accessors of both fields when
+// two fields in the same message would generate conflicting accessor names
+// (e.g. `string foo_list = 1;` and `repeated string foo = 2;` both generate `getFooList()`).
+// Keep in sync with `InitializeFieldGeneratorInfoForFields` / `IsConflicting` in
+// protobuf's src/google/protobuf/compiler/java/context.cc
+private val FieldDescriptor.conflictSuffix: String
+    get() {
+        val myName = escapedPascalName
+        val conflicting = containingType.fields.any { other ->
+            other !== this && isConflicting(this, myName, other, other.escapedPascalName)
+        }
+        return if (conflicting) number.toString() else ""
+    }
+
+private fun isConflicting(
+    field1: FieldDescriptor,
+    name1: String,
+    field2: FieldDescriptor,
+    name2: String,
+): Boolean = name1 == name2 ||
+    isConflictingOneWay(field1, name1, field2, name2) ||
+    isConflictingOneWay(field2, name2, field1, name1)
+
+private fun isConflictingOneWay(
+    field1: FieldDescriptor,
+    name1: String,
+    field2: FieldDescriptor,
+    name2: String,
+): Boolean = isRepeatedFieldConflicting(field1, name1, field2, name2) ||
+    isEnumFieldConflicting(field1, name1, name2)
+
+// Both a repeated field `foo` and a singular field `foo_count`/`foo_list` would generate
+// `getFooCount()`/`getFooList()`.
+private fun isRepeatedFieldConflicting(
+    field1: FieldDescriptor,
+    name1: String,
+    field2: FieldDescriptor,
+    name2: String,
+): Boolean = field1.isRepeated && !field2.isRepeated && (name2 == name1 + "Count" || name2 == name1 + "List")
+
+// Both an open enum field `foo` and a regular field `foo_value` would generate `getFooValue()`.
+private fun isEnumFieldConflicting(
+    field1: FieldDescriptor,
+    name1: String,
+    name2: String,
+): Boolean = field1.type == FieldDescriptor.Type.ENUM &&
+    !field1.legacyEnumFieldTreatedAsClosed() &&
+    name2 == name1 + "Value"
 
 // protoc's Java generator appends a trailing "_" to fields whose PascalCase name would
 // collide with methods of the generated message's base classes (java.lang.Object,
