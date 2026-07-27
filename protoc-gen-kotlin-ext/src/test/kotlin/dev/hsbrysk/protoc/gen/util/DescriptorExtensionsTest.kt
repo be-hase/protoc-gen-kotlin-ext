@@ -4,9 +4,12 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.google.protobuf.ByteString
 import com.google.protobuf.DescriptorProtos.DescriptorProto
+import com.google.protobuf.DescriptorProtos.EnumDescriptorProto
+import com.google.protobuf.DescriptorProtos.EnumValueDescriptorProto
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto
 import com.google.protobuf.DescriptorProtos.FileOptions
+import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto
 import com.google.protobuf.Descriptors.Descriptor
 import com.google.protobuf.Descriptors.EnumDescriptor
 import com.google.protobuf.Descriptors.FieldDescriptor
@@ -98,6 +101,80 @@ class DescriptorExtensionsTest {
         )
 
         assertThat(fileDescriptor.messageTypes.first().javaPackage).isEqualTo("com.example.HogeOuterClass")
+    }
+
+    @Test
+    fun `Descriptor javaPackage outerClass derived from proto filename`() {
+        val fileDescriptor = FileDescriptor.buildFrom(
+            FileDescriptorProto.newBuilder().setName("hoge_bar.proto").setPackage("com.example")
+                .addMessageType(DescriptorProto.newBuilder().setName("Fuga").build())
+                .setOptions(FileOptions.newBuilder().setJavaMultipleFiles(false).build()).build(),
+            arrayOf(),
+        )
+
+        assertThat(fileDescriptor.messageTypes.first().javaPackage).isEqualTo("com.example.HogeBar")
+    }
+
+    @Test
+    fun `Descriptor javaPackage same outerClass as enum`() {
+        val fileDescriptor = FileDescriptor.buildFrom(
+            FileDescriptorProto.newBuilder().setName("hoge.proto").setPackage("com.example")
+                .addEnumType(
+                    EnumDescriptorProto.newBuilder().setName("Hoge")
+                        .addValue(EnumValueDescriptorProto.newBuilder().setName("HOGE_UNSPECIFIED").setNumber(0))
+                        .build(),
+                )
+                .addMessageType(DescriptorProto.newBuilder().setName("Fuga").build())
+                .setOptions(FileOptions.newBuilder().setJavaMultipleFiles(false).build()).build(),
+            arrayOf(),
+        )
+
+        assertThat(fileDescriptor.messageTypes.first().javaPackage).isEqualTo("com.example.HogeOuterClass")
+    }
+
+    @Test
+    fun `Descriptor javaPackage same outerClass as service`() {
+        val fileDescriptor = FileDescriptor.buildFrom(
+            FileDescriptorProto.newBuilder().setName("hoge.proto").setPackage("com.example")
+                .addService(ServiceDescriptorProto.newBuilder().setName("Hoge").build())
+                .addMessageType(DescriptorProto.newBuilder().setName("Fuga").build())
+                .setOptions(FileOptions.newBuilder().setJavaMultipleFiles(false).build()).build(),
+            arrayOf(),
+        )
+
+        assertThat(fileDescriptor.messageTypes.first().javaPackage).isEqualTo("com.example.HogeOuterClass")
+    }
+
+    @Test
+    fun `EnumDescriptor javaPackage`() {
+        val fileDescriptor = FileDescriptor.buildFrom(
+            FileDescriptorProto.newBuilder().setName("sample.proto").setPackage("com.example")
+                .addEnumType(
+                    EnumDescriptorProto.newBuilder().setName("Hoge")
+                        .addValue(EnumValueDescriptorProto.newBuilder().setName("HOGE_UNSPECIFIED").setNumber(0))
+                        .build(),
+                )
+                .setOptions(FileOptions.newBuilder().setJavaMultipleFiles(false).build()).build(),
+            arrayOf(),
+        )
+
+        assertThat(fileDescriptor.enumTypes.first().javaPackage).isEqualTo("com.example.Sample")
+    }
+
+    @Test
+    fun `EnumDescriptor javaPackage multiple files`() {
+        val fileDescriptor = FileDescriptor.buildFrom(
+            FileDescriptorProto.newBuilder().setName("sample.proto").setPackage("com.example")
+                .addEnumType(
+                    EnumDescriptorProto.newBuilder().setName("Hoge")
+                        .addValue(EnumValueDescriptorProto.newBuilder().setName("HOGE_UNSPECIFIED").setNumber(0))
+                        .build(),
+                )
+                .setOptions(FileOptions.newBuilder().setJavaMultipleFiles(true).build()).build(),
+            arrayOf(),
+        )
+
+        assertThat(fileDescriptor.enumTypes.first().javaPackage).isEqualTo("com.example")
     }
 
     @Test
@@ -194,6 +271,54 @@ class DescriptorExtensionsTest {
         )
         assertThat(noConflict.fields[0].javaName).isEqualTo("bazList")
         assertThat(noConflict.fields[1].javaName).isEqualTo("baz")
+    }
+
+    @Test
+    fun `FieldDescriptor javaName enum value conflict`() {
+        // An open enum field `color` and a `color_value` field both generate `getColorValue()`,
+        // so protoc appends the field number to both.
+        val messageDescriptor = FileDescriptor.buildFrom(
+            FileDescriptorProto.newBuilder().setName("conflict.proto").setSyntax("proto3")
+                .addEnumType(
+                    EnumDescriptorProto.newBuilder().setName("Color")
+                        .addValue(EnumValueDescriptorProto.newBuilder().setName("COLOR_UNSPECIFIED").setNumber(0))
+                        .build(),
+                )
+                .addMessageType(
+                    DescriptorProto.newBuilder().setName("Conflict")
+                        .addField(
+                            FieldDescriptorProto.newBuilder()
+                                .setName("color")
+                                .setNumber(1)
+                                .setType(FieldDescriptorProto.Type.TYPE_ENUM)
+                                .setTypeName(".Color")
+                                .setLabel(FieldDescriptorProto.Label.LABEL_OPTIONAL),
+                        )
+                        .addField(stringField("color_value", 2)),
+                )
+                .build(),
+            arrayOf(),
+        ).messageTypes.first()
+
+        assertThat(messageDescriptor.fields[0].javaName).isEqualTo("color1")
+        assertThat(messageDescriptor.fields[1].javaName).isEqualTo("colorValue2")
+    }
+
+    @Test
+    fun `FieldDescriptor javaName forbidden names`() {
+        // protoc appends "_" to fields whose PascalCase name collides with methods of
+        // the generated message's base classes.
+        val messageDescriptor = buildMessage(
+            stringField("class", 1),
+            stringField("serialized_size", 2),
+            stringField("unknown_fields", 3, repeated = true),
+        )
+
+        assertThat(messageDescriptor.fields[0].javaName).isEqualTo("class_")
+        assertThat(messageDescriptor.fields[1].javaName).isEqualTo("serializedSize_")
+        assertThat(messageDescriptor.fields[2].javaName).isEqualTo("unknownFields_List")
+        assertThat(messageDescriptor.fields[0].javaPascalName).isEqualTo("Class_")
+        assertThat(messageDescriptor.fields[2].javaPascalName).isEqualTo("UnknownFields_")
     }
 
     @TestFactory
