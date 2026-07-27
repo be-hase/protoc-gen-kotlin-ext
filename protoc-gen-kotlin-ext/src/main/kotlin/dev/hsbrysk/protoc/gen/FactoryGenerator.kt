@@ -9,7 +9,7 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.TypeSpec
 import dev.hsbrysk.protoc.gen.util.javaName
 import dev.hsbrysk.protoc.gen.util.javaPackage
-import dev.hsbrysk.protoc.gen.util.pascalCase
+import dev.hsbrysk.protoc.gen.util.javaPascalName
 import dev.hsbrysk.protoc.gen.util.typeName
 
 class FactoryGenerator : Generator {
@@ -69,20 +69,10 @@ class FactoryGenerator : Generator {
     }
 
     private val FieldDescriptor.builderMethodName: String
-        get() {
-            return if (name == "class") {
-                when {
-                    isMapField -> "putAllClass_"
-                    isRepeated -> "addAllClass_"
-                    else -> "setClass_"
-                }
-            } else {
-                when {
-                    isMapField -> "putAll${name.pascalCase()}"
-                    isRepeated -> "addAll${name.pascalCase()}"
-                    else -> "set${name.pascalCase()}"
-                }
-            }
+        get() = when {
+            isMapField -> "putAll$javaPascalName"
+            isRepeated -> "addAll$javaPascalName"
+            else -> "set$javaPascalName"
         }
 
     // Create an interface to handle `FileSpec.Builder` and `TypeSpec.Builder` transparently in `applyRecursively`.
