@@ -22,7 +22,9 @@ class GeneratorRunnerTest {
     fun main() {
         val response = runMain(request(""))
 
-        assertThat(response.supportedFeatures).isEqualTo(Feature.FEATURE_PROTO3_OPTIONAL_VALUE.toLong())
+        // supportedFeatures is a bitmask, so check the bit instead of comparing exactly.
+        val proto3Optional = Feature.FEATURE_PROTO3_OPTIONAL_VALUE.toLong()
+        assertThat(response.supportedFeatures and proto3Optional).isEqualTo(proto3Optional)
         // The proto2 file is skipped, so only the proto3 file is generated.
         assertThat(response.fileList.map { it.name }).isEqualTo(listOf("com/example/PersonKtExtensions.kt"))
 
