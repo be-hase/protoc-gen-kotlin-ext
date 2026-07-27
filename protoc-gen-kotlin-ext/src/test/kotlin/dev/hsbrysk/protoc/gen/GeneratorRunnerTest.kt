@@ -29,16 +29,36 @@ class GeneratorRunnerTest {
         assertThat(response.fileList.map { it.name }).isEqualTo(listOf("com/example/PersonKtExtensions.kt"))
 
         val content = response.getFile(0).content
-        assertThat(content).contains("public fun Person(firstName: String, nickname: String?): Person")
+        assertThat(content).contains(PERSON_FACTORY_SIGNATURE)
         assertThat(content).contains("nicknameOrNull")
+        // messageOrNullGetter is off by default.
+        assertThat(content).doesNotContain("addressOrNull")
     }
 
     @Test
-    fun `main compile options are applied`() {
+    fun `main factory disabled`() {
         val response = runMain(request("factory-"))
 
         val content = response.getFile(0).content
         assertThat(content).doesNotContain("public fun Person(")
+        assertThat(content).contains("nicknameOrNull")
+    }
+
+    @Test
+    fun `main orNullGetter disabled`() {
+        val response = runMain(request("orNullGetter-"))
+
+        val content = response.getFile(0).content
+        assertThat(content).contains(PERSON_FACTORY_SIGNATURE)
+        assertThat(content).doesNotContain("nicknameOrNull")
+    }
+
+    @Test
+    fun `main messageOrNullGetter enabled`() {
+        val response = runMain(request("messageOrNullGetter+"))
+
+        val content = response.getFile(0).content
+        assertThat(content).contains("public val PersonOrBuilder.addressOrNull: Address?")
         assertThat(content).contains("nicknameOrNull")
     }
 
@@ -65,6 +85,15 @@ class GeneratorRunnerTest {
     }
 
     companion object {
+        private val PERSON_FACTORY_SIGNATURE =
+            """
+            |public fun Person(
+            |  firstName: String,
+            |  nickname: String?,
+            |  address: Address?,
+            |): Person
+            """.trimMargin()
+
         private val PERSON_PROTO: FileDescriptorProto = FileDescriptorProto.newBuilder()
             .setName("person.proto")
             .setSyntax("proto3")
@@ -90,6 +119,26 @@ class GeneratorRunnerTest {
                             .setLabel(FieldDescriptorProto.Label.LABEL_OPTIONAL)
                             .setProto3Optional(true)
                             .setOneofIndex(0),
+                    )
+                    // A message field in proto3 always has presence.
+                    .addField(
+                        FieldDescriptorProto.newBuilder()
+                            .setName("address")
+                            .setNumber(3)
+                            .setType(FieldDescriptorProto.Type.TYPE_MESSAGE)
+                            .setTypeName(".com.example.Address")
+                            .setLabel(FieldDescriptorProto.Label.LABEL_OPTIONAL),
+                    ),
+            )
+            .addMessageType(
+                DescriptorProto.newBuilder()
+                    .setName("Address")
+                    .addField(
+                        FieldDescriptorProto.newBuilder()
+                            .setName("city")
+                            .setNumber(1)
+                            .setType(FieldDescriptorProto.Type.TYPE_STRING)
+                            .setLabel(FieldDescriptorProto.Label.LABEL_OPTIONAL),
                     ),
             )
             .build()

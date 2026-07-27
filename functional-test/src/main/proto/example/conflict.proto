@@ -23,6 +23,13 @@ message MapConflict {
   map<string, string> baz = 2;
 }
 
+// Both repeated: the accessors are getFooListList() and getFooList(), which do not
+// conflict, so protoc does not append the field numbers.
+message NoListConflict {
+  repeated string foo_list = 1;
+  repeated string foo = 2;
+}
+
 enum ConflictColor {
   CONFLICT_COLOR_UNSPECIFIED = 0;
   CONFLICT_COLOR_RED = 1;
