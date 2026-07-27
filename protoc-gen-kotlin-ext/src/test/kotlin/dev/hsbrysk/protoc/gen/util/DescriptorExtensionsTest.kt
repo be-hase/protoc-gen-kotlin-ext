@@ -180,7 +180,7 @@ class DescriptorExtensionsTest {
 
         // Fields whose capitalized names are identical also conflict.
         // (Only possible in proto2; proto3 rejects it as a JSON name conflict.)
-        val sameName = buildMessage(
+        val sameName = buildProto2Message(
             stringField("foo_bar", 1),
             stringField("fooBar", 2),
         )
@@ -302,8 +302,17 @@ class DescriptorExtensionsTest {
         ).isEqualTo(LIST.parameterizedBy(String::class.asTypeName()))
     }
 
-    private fun buildMessage(vararg fields: FieldDescriptorProto): Descriptor = FileDescriptor.buildFrom(
-        FileDescriptorProto.newBuilder().setName("conflict.proto")
+    private fun buildMessage(vararg fields: FieldDescriptorProto): Descriptor = buildMessage("proto3", *fields)
+
+    // proto2 is only needed for conflict cases that proto3 rejects at the protoc level
+    // (e.g. identical capitalized names).
+    private fun buildProto2Message(vararg fields: FieldDescriptorProto): Descriptor = buildMessage("proto2", *fields)
+
+    private fun buildMessage(
+        syntax: String,
+        vararg fields: FieldDescriptorProto,
+    ): Descriptor = FileDescriptor.buildFrom(
+        FileDescriptorProto.newBuilder().setName("conflict.proto").setSyntax(syntax)
             .addMessageType(DescriptorProto.newBuilder().setName("Conflict").addAllField(fields.toList()))
             .build(),
         arrayOf(),
