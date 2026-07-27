@@ -271,38 +271,61 @@ class DescriptorExtensionsTest {
         )
         assertThat(noConflict.fields[0].javaName).isEqualTo("bazList")
         assertThat(noConflict.fields[1].javaName).isEqualTo("baz")
+
+        // Both repeated: repeated `foo_list` generates `getFooListList()` while repeated `foo`
+        // generates `getFooList()`, so the actual accessors don't conflict and no field number
+        // is appended.
+        val bothRepeated = buildMessage(
+            stringField("foo_list", 1, repeated = true),
+            stringField("foo", 2, repeated = true),
+        )
+        assertThat(bothRepeated.fields[0].javaName).isEqualTo("fooListList")
+        assertThat(bothRepeated.fields[1].javaName).isEqualTo("fooList")
     }
 
     @Test
     fun `FieldDescriptor javaName enum value conflict`() {
         // An open enum field `color` and a `color_value` field both generate `getColorValue()`,
         // so protoc appends the field number to both.
-        val messageDescriptor = FileDescriptor.buildFrom(
-            FileDescriptorProto.newBuilder().setName("conflict.proto").setSyntax("proto3")
-                .addEnumType(
-                    EnumDescriptorProto.newBuilder().setName("Color")
-                        .addValue(EnumValueDescriptorProto.newBuilder().setName("COLOR_UNSPECIFIED").setNumber(0))
-                        .build(),
-                )
-                .addMessageType(
-                    DescriptorProto.newBuilder().setName("Conflict")
-                        .addField(
-                            FieldDescriptorProto.newBuilder()
-                                .setName("color")
-                                .setNumber(1)
-                                .setType(FieldDescriptorProto.Type.TYPE_ENUM)
-                                .setTypeName(".Color")
-                                .setLabel(FieldDescriptorProto.Label.LABEL_OPTIONAL),
-                        )
-                        .addField(stringField("color_value", 2)),
-                )
-                .build(),
-            arrayOf(),
-        ).messageTypes.first()
+        val messageDescriptor = buildEnumValueMessage("proto3")
 
         assertThat(messageDescriptor.fields[0].javaName).isEqualTo("color1")
         assertThat(messageDescriptor.fields[1].javaName).isEqualTo("colorValue2")
     }
+
+    @Test
+    fun `FieldDescriptor javaName closed enum value no conflict`() {
+        // proto2 enums are closed, so protoc doesn't generate `getColorValue()` for the enum
+        // field and `color` / `color_value` keep their names without field numbers.
+        val messageDescriptor = buildEnumValueMessage("proto2")
+
+        assertThat(messageDescriptor.fields[0].javaName).isEqualTo("color")
+        assertThat(messageDescriptor.fields[1].javaName).isEqualTo("colorValue")
+    }
+
+    // A message with an enum field `color` and a string field `color_value`.
+    private fun buildEnumValueMessage(syntax: String): Descriptor = FileDescriptor.buildFrom(
+        FileDescriptorProto.newBuilder().setName("conflict.proto").setSyntax(syntax)
+            .addEnumType(
+                EnumDescriptorProto.newBuilder().setName("Color")
+                    .addValue(EnumValueDescriptorProto.newBuilder().setName("COLOR_UNSPECIFIED").setNumber(0))
+                    .build(),
+            )
+            .addMessageType(
+                DescriptorProto.newBuilder().setName("Conflict")
+                    .addField(
+                        FieldDescriptorProto.newBuilder()
+                            .setName("color")
+                            .setNumber(1)
+                            .setType(FieldDescriptorProto.Type.TYPE_ENUM)
+                            .setTypeName(".Color")
+                            .setLabel(FieldDescriptorProto.Label.LABEL_OPTIONAL),
+                    )
+                    .addField(stringField("color_value", 2)),
+            )
+            .build(),
+        arrayOf(),
+    ).messageTypes.first()
 
     @Test
     fun `FieldDescriptor javaName forbidden names`() {

@@ -29,6 +29,14 @@ class ConflictTest {
     }
 
     @Test
+    fun `compileCheck NoListConflict`() {
+        // Both repeated, so the accessors don't conflict and no field number is appended.
+        val result: NoListConflict = NoListConflict(fooListList = listOf("hoge"), fooList = listOf("bar"))
+        assertThat(result.fooListList).isEqualTo(listOf("hoge"))
+        assertThat(result.fooList).isEqualTo(listOf("bar"))
+    }
+
+    @Test
     fun `compileCheck EnumValueConflict`() {
         val result: EnumValueConflict = EnumValueConflict(
             color1 = ConflictColor.CONFLICT_COLOR_RED,

@@ -10,6 +10,9 @@ class AllTypeMessageTest {
     @Test
     @Suppress("LongMethod")
     fun compileCheck() {
+        // Compile-level check that sint32 fields map to Int (not Long).
+        val sint32Value: Int = 0
+        val opSint32Value: Int? = null
         val obj: AllTypeMessage = AllTypeMessage(
             doubleFd = 0.0,
             opDoubleFd = null,
@@ -29,9 +32,9 @@ class AllTypeMessageTest {
             uint64Fd = 0,
             opUint64Fd = null,
             rpUint64FdList = listOf(),
-            sint32Fd = 0,
-            opSint32Fd = null,
-            rpSint32FdList = listOf(),
+            sint32Fd = sint32Value,
+            opSint32Fd = opSint32Value,
+            rpSint32FdList = listOf(sint32Value),
             sint64Fd = 0,
             opSint64Fd = null,
             rpSint64FdList = listOf(),
@@ -72,7 +75,8 @@ class AllTypeMessageTest {
         assertThat(obj.opInt64FdOrNull).isNull()
         assertThat(obj.opUint32FdOrNull).isNull()
         assertThat(obj.opUint64FdOrNull).isNull()
-        assertThat(obj.opSint32FdOrNull).isNull()
+        val opSint32FdOrNull: Int? = obj.opSint32FdOrNull
+        assertThat(opSint32FdOrNull).isNull()
         assertThat(obj.opSint64FdOrNull).isNull()
         assertThat(obj.opFixed32FdOrNull).isNull()
         assertThat(obj.opFixed64FdOrNull).isNull()

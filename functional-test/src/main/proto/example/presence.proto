@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = true;
+
+// Verifies protobuf's presence semantics through the generated factory functions and
+// `xxxOrNull` getters: an unset field is null, while a field explicitly set to its
+// type's default value still has presence.
+message PresenceMessage {
+  optional int32 op_int32_fd = 1;
+  optional bool op_bool_fd = 2;
+  optional string op_string_fd = 3;
+  optional PresenceEnum op_enum_fd = 4;
+  oneof test_one_of {
+    string one_of_string_fd = 5;
+  }
+  PresenceChild message_fd = 6;
+}
+
+message PresenceChild {
+  int32 value = 1;
+}
+
+enum PresenceEnum {
+  PRESENCE_ENUM_UNSPECIFIED = 0;
+  PRESENCE_ENUM_A = 1;
+}

@@ -27,8 +27,8 @@ message AllTypeMessage {
   optional uint64 op_uint64_fd = 17;
   repeated uint64 rp_uint64_fd = 18;
   sint32 sint32_fd = 19;
-  optional sint64 op_sint32_fd = 20;
-  repeated sint64 rp_sint32_fd = 21;
+  optional sint32 op_sint32_fd = 20;
+  repeated sint32 rp_sint32_fd = 21;
   sint64 sint64_fd = 22;
   optional sint64 op_sint64_fd = 46;
   repeated sint64 rp_sint64_fd = 23;
