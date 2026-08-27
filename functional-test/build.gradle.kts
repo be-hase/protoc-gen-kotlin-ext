@@ -11,6 +11,11 @@ description = "Function test module for protoc-gen-kotlin-ext"
 
 val withProtocGenKotlin = providers.gradleProperty("withProtocGenKotlin").isPresent
 
+// Separate source set for editions .proto files since protoc-gen-grpckt does not yet support editions.
+sourceSets {
+    create("editions")
+}
+
 dependencies {
     implementation(libs.protobuf.java)
     if (withProtocGenKotlin) {
@@ -18,6 +23,13 @@ dependencies {
     }
     implementation(libs.grpc.java.protobuf)
     implementation(libs.grpc.kotlin.stub)
+
+    "editionsImplementation"(libs.protobuf.java)
+    if (withProtocGenKotlin) {
+        "editionsImplementation"(libs.protobuf.kotlin)
+    }
+    // Make generated editions code visible to main and test source sets.
+    implementation(sourceSets["editions"].output)
 }
 
 protobuf {
@@ -40,6 +52,8 @@ protobuf {
         all().forEach { task ->
             task.dependsOn(":protoc-gen-kotlin-ext:installDist")
 
+            val isEditions = task.sourceSet.name == "editions"
+
             if (withProtocGenKotlin) {
                 task.builtins {
                     id("kotlin")
@@ -52,13 +66,15 @@ protobuf {
                         option("messageOrNullGetter+")
                     }
                 }
-                // Test to ensure there are no issues when using gen-grpc-java.
-                id("grpc") {
-                    outputSubDir = "java"
-                }
-                // Test to ensure there are no issues when using gen-grpc-kotlin.
-                id("grpckt") {
-                    outputSubDir = "kotlin"
+                if (!isEditions) {
+                    // Test to ensure there are no issues when using gen-grpc-java.
+                    id("grpc") {
+                        outputSubDir = "java"
+                    }
+                    // Test to ensure there are no issues when using gen-grpc-kotlin.
+                    id("grpckt") {
+                        outputSubDir = "kotlin"
+                    }
                 }
             }
         }
