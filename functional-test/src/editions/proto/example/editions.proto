@@ -1,0 +1,47 @@
+edition = "2023";
+
+package example;
+
+option java_package = "example.protocol";
+option java_multiple_files = true;
+option features.field_presence = IMPLICIT;
+
+message EditionsMessage {
+  // IMPLICIT presence (file-level default) - no OrNull generated
+  int32 implicit_int32 = 1;
+  string implicit_string = 2;
+
+  // EXPLICIT presence - OrNull generated
+  int32 explicit_int32 = 3 [features.field_presence = EXPLICIT];
+  string explicit_string = 4 [features.field_presence = EXPLICIT];
+
+  // Message field (always EXPLICIT in editions 2023) - OrNull generated
+  EditionsNested nested = 5;
+
+  // repeated field - no OrNull
+  repeated string repeated_string = 6;
+
+  // map field - no OrNull
+  map<string, string> map_field = 7;
+
+  // oneof fields - each field has OrNull
+  oneof test_one_of {
+    string one_of_a = 8;
+    string one_of_b = 9;
+  }
+
+  // enum field - IMPLICIT (no OrNull)
+  EditionsEnum enum_fd = 10;
+
+  // enum field - EXPLICIT (OrNull generated)
+  EditionsEnum explicit_enum = 11 [features.field_presence = EXPLICIT];
+}
+
+message EditionsNested {
+  string value = 1;
+}
+
+enum EditionsEnum {
+  EDITIONS_ENUM_UNSPECIFIED = 0;
+  EDITIONS_ENUM_A = 1;
+}
