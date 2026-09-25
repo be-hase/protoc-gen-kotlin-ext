@@ -1,5 +1,6 @@
 package dev.hsbrysk.protoc.gen
 
+import com.google.protobuf.DescriptorProtos.Edition
 import com.google.protobuf.Descriptors.FileDescriptor
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorRequest
 import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse
@@ -18,7 +19,12 @@ object GeneratorRunner {
         val fileSpecs = generateFileSpecs(generatorRequest)
 
         val generatorResponse = CodeGeneratorResponse.newBuilder()
-            .setSupportedFeatures(Feature.FEATURE_PROTO3_OPTIONAL_VALUE.toLong())
+            .setSupportedFeatures(
+                Feature.FEATURE_PROTO3_OPTIONAL_VALUE.toLong() or
+                    Feature.FEATURE_SUPPORTS_EDITIONS_VALUE.toLong(),
+            )
+            .setMinimumEdition(Edition.EDITION_PROTO2_VALUE)
+            .setMaximumEdition(Edition.EDITION_2024_VALUE)
             .addAllFile(
                 fileSpecs.map {
                     CodeGeneratorResponse.File.newBuilder()
@@ -51,7 +57,7 @@ object GeneratorRunner {
 
         return request.fileToGenerateList
             .map { fileDescriptorMap.getValue(it) }
-            .filter { it.toProto().syntax == "proto3" } // Only target proto3.
+            .filter { it.toProto().syntax in setOf("proto3", "editions") } // Only target proto3 and editions.
             .map { fileDescriptor ->
                 val fileSpecBuilder = FileSpec.builder(
                     fileDescriptor.javaPackage,
