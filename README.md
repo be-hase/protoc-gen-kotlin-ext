@@ -4,6 +4,16 @@
 
 A protoc compiler plugin that generates useful extension code for Kotlin.
 
+## Supported syntax
+
+| Syntax | Supported |
+|--------|-----------|
+| proto3 | ✓ |
+| editions (edition 2023 and later) | ✓ |
+| proto2 | - |
+
+Requires `protobuf-java` 4.x or later.
+
 ## Features
 
 - Generate `*OrNull` extension properties for optional field
